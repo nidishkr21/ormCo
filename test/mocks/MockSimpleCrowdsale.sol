@@ -1,6 +1,6 @@
 pragma solidity ^0.4.11;
 
-import "../../contracts/example/SimpleCrowdsale.sol";
+import "../../contracts/crowdsale/multistage/TokenCappedCrowdsale.sol";
 
 
 /**
@@ -14,19 +14,19 @@ import "../../contracts/example/SimpleCrowdsale.sol";
  * After adding multiple features it's good practice to run integration tests
  * to ensure that subcontracts works together as intended.
  */
-contract MockSimpleCrowdsale is SimpleCrowdsale {
+contract MockSimpleCrowdsale is Crowdsale, TokenCappedCrowdsale {
 
 
-  function MockSimpleCrowdsale(uint256 _startTime, uint256 _endTime, uint256 _rate, address _wallet, address controller, uint256 _cap, uint256 _goal)
-    SimpleCrowdsale(_startTime, _endTime, _rate, _wallet, controller, _cap, _goal)
+  function MockSimpleCrowdsale(uint256 _startTime, uint256[] _endTime, uint256[] _rate, address _wallet, address controller, uint256[] _cap, uint256[] _capTimes)
+  Crowdsale(_startTime, _endTime, _rate, _wallet, controller)
+  TokenCappedCrowdsale(_cap, _capTimes)
   {
 
   }
 
   function diluteCaps() public {
-    // diluting all caps by 10^6 for testing
-    tokenCap = tokenCap.div(1e6);
-    goal = goal.div(1e6);
-
+     for(uint8 i = 0; i < softCap.length; i++) {
+       softCap[i].cap = softCap[i].cap.div(1e6);
+    }
   }
 }
